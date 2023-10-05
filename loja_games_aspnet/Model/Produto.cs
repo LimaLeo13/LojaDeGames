@@ -35,6 +35,10 @@ namespace loja_games.Model
         [StringLength(5000)]
         public string Foto { get; set;} = string.Empty;
 
+        [Column(TypeName = "int")]
+        [StringLength(5000)]
+        public int Curtir { get; set; } = 0;
+
         public virtual Categoria? Categoria { get; set; }
     }
 }

@@ -6,6 +6,8 @@ using loja_games.Service.Implements;
 using loja_games.Service;
 using loja_games.Validator;
 using Microsoft.EntityFrameworkCore;
+using loja_games.Security.Implements;
+using Microsoft.Identity.Client;
 
 namespace loja_games
 {
@@ -35,23 +37,29 @@ namespace loja_games
             // Validação das Entidades
             builder.Services.AddTransient<IValidator<Produto>, ProdutoValidator>();
             builder.Services.AddTransient<IValidator<Categoria>, CategoriaValidator>();
+            builder.Services.AddTransient<IValidator<User>, UserValidator>();
+
+
 
             // Registrar as Classes e Interfaces Service
             builder.Services.AddScoped<IProdutoService, ProdutoService>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             // Configuração do CORS
-            builder.Services.AddCors(options => {
+            builder.Services.AddCors(options =>
+            {
                 options.AddPolicy(name: "MyPolicy",
                     policy =>
                     {
                         policy.AllowAnyOrigin()
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
                     });
             });
 
@@ -75,11 +83,15 @@ namespace loja_games
 
             app.UseCors("MyPolicy");
 
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.MapControllers();
 
             app.Run();
+
+            
         }
     }
 }
